@@ -1,0 +1,14 @@
+schema_version: '0.1'
+name: content-review
+description: Draft and review a short document.
+stages:
+  - id: draft
+    instruction: Write a first draft based on the supplied brief.
+    inputs: [brief.md]
+    outputs: [draft.md]
+  - id: review
+    instruction: Review the draft for clarity and completeness.
+    inputs: [draft.md]
+    outputs: [review.md]
+    depends_on: [draft]
+    approval_required: true
