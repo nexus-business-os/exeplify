@@ -87,6 +87,8 @@ Future transformation and harness adapters should consume the canonical workflow
 
 Local-first, inspectable files, explicit stage contracts, independent harness integrations, and human oversight. Expelify is not a model training project or a proprietary model runtime.
 
-## License
+## Copyright and licensing
 
-MIT. See [LICENSE](LICENSE).
+Copyright © 2026. All rights reserved.
+
+Expelify is an independently owned, proprietary software project and is not open-source. The source code is publicly viewable, but no license to copy, modify, redistribute, or commercially use it is granted. Future commercial offerings may be made available under separate terms.
