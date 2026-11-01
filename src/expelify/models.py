@@ -1,13 +1,18 @@
 """Canonical workflow data contracts (v0.1)."""
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from typing import Annotated
+
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_validator
+
+
+NonBlank = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)]
 
 
 class Stage(BaseModel):
     model_config = ConfigDict(extra="forbid")
     id: str = Field(min_length=1, pattern=r"^[a-z][a-z0-9_-]*$")
-    instruction: str = Field(min_length=1)
-    inputs: list[str] = Field(default_factory=list)
-    outputs: list[str] = Field(min_length=1)
+    instruction: NonBlank
+    inputs: list[NonBlank] = Field(default_factory=list)
+    outputs: list[NonBlank] = Field(min_length=1)
     depends_on: list[str] = Field(default_factory=list)
     approval_required: bool = False
 
@@ -15,12 +20,12 @@ class Stage(BaseModel):
 class Workflow(BaseModel):
     model_config = ConfigDict(extra="forbid")
     schema_version: str = Field(pattern=r"^0\.1$")
-    name: str = Field(min_length=1)
+    name: NonBlank
     description: str = ""
     stages: list[Stage] = Field(min_length=1)
 
     @model_validator(mode="after")
-    def check_dependencies(self):
+    def check_dependencies(self) -> "Workflow":
         ids = [stage.id for stage in self.stages]
         if len(ids) != len(set(ids)):
             raise ValueError("stage IDs must be unique")
@@ -37,7 +42,7 @@ class Workflow(BaseModel):
         visiting: set[str] = set()
         visited: set[str] = set()
 
-        def visit(node: str):
+        def visit(node: str) -> None:
             if node in visiting:
                 raise ValueError("workflow contains a dependency cycle")
             if node in visited:
